@@ -17,19 +17,36 @@
     <script src="js/bootstrap-form.js"></script>
     <script>
      $(document).ready(function() {
-      // Declare Variables
-      var teams;
-
       $('form').form(); //form validation
 
+      // Declare Variables
+      var league_array = [];
+
+
+      // Function to collect team information and store it in an array
       $('#modalSubmit').click(function() {
-       console.log("click function run");
-       $('form').submit(function() {
-        teams = $(this).serializeArray();
-        console.log(teams);
+        
+        var team_array = [];
+        
+        $('.teamInput').each(function() {
+          team_array.push($(this).val());
+        }); //end teamInput each
+        
+        league_array.push(team_array);
+        
+        $('#teamTable').append("<tr><td>" + league_array[0][0] + "</td></tr>");
+        
+        $('#myModal').modal('hide');
+
         return false;
-       }); //end submit
       }); //end modal form button click
+     
+      //function to test storage of data
+       $('#test').click(function(){
+       console.log(league_array[0]);
+       console.log(league_array[1]);
+      })
+
      }); //end document ready
     </script>
 </head>
@@ -49,7 +66,7 @@
       <th>%</th>
      </tr>
     </thead>
-    <tbody>
+    <tbody id="teamTable">
      <tr>
       <td>Team 1</td>
       <td>3</td>
@@ -62,7 +79,7 @@
 
   <!-- Button to trigger modal -->
   <a href="#myModal" role="button" class="btn" data-toggle="modal">Add a Team</a>
- 
+  <button id="test" type="submit" class="btn" onclick="return false">test</button>
   <!-- Modal -->
   <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-header">
@@ -74,40 +91,40 @@
      <div class="control-group">
        <label class="control-label" for="inputTeamName">Team Name</label>
        <div class="controls">
-         <input name="teamName" type="text" id="inputTeamName" placeholder="Team Name" data-error="This field is required." required>
+         <input name="teamName" type="text" id="inputTeamName" class="teamInput" placeholder="Team Name" data-error="This field is required." required>
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputMgrFirstName">Manager First Name</label>
        <div class="controls">
-         <input name="firstName" type="text" id="inputMgrFirstName" placeholder="Manager First Name" data-error="This field is required." required>
+         <input name="firstName" type="text" id="inputMgrFirstName" class="teamInput" placeholder="Manager First Name" data-error="This field is required." required>
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputMgrLastName">Manager Last Name</label>
        <div class="controls">
-         <input name="lastName" type="text" id="inputMgrLastName" placeholder="Manager Last Name" data-error="This field is required." required>
+         <input name="lastName" type="text" id="inputMgrLastName" class="teamInput" placeholder="Manager Last Name" data-error="This field is required." required>
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputPhoneNumber">Phone Number</label>
        <div class="controls">
-         <input name="phoneNumber" type="tel" id="inputPhoneNumber" placeholder="Phone Number" pattern="[0-9]{10}" data-error="Please give a correct phone number." required>
+         <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="teamInput" placeholder="Phone Number" pattern="[0-9]{10}" data-error="Please give a correct phone number." required>
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputSponsor">Sponsor</label>
        <div class="controls">
-         <input name="sponsor" type="text" id="inputSponsor" placeholder="Sponsor" data-error="This field is required." required>
+         <input name="sponsor" type="text" id="inputSponsor" class="teamInput" placeholder="Sponsor" data-error="This field is required." required>
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputZip">Zip Code</label>
        <div class="controls">
-         <input name="zip" type="number" id="inputZip" placeholder="Zip Code" value="0" min="1000" max="99999" data-error="Please give a valid zip code." required>
+         <input name="zip" type="number" id="inputZip" class="teamInput" placeholder="Zip Code" value="0" min="1000" max="99999" data-error="Please give a valid zip code." required>
        </div>
      </div>
-       <div class="form-actions">
+       <div class="controls">
        <button id="modalSubmit" type="submit" class="btn btn-primary">Submit</button>
        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
      </div>
@@ -120,5 +137,6 @@
   </div> <!-- End Modal -->
  </div> <!-- End Wrapper -->
 </div> <!-- End Container -->
+<div id="value"></div>
 </body>
 </html>
