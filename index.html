@@ -18,15 +18,18 @@
     <script>
      $(document).ready(function() {
       // Declare Variables
-      var teams;
-
+      var team_array = [];
+      var league_array = [];
+      
       $('form').form(); //form validation
 
       $('#modalSubmit').click(function() {
        console.log("click function run");
        $('form').submit(function() {
-        teams = $(this).serializeArray();
-        console.log(teams);
+        team_array = $(this).serializeArray();
+        console.log(team_array);
+        league_array.push(team_array);
+        console.log(league_array);
         return false;
        }); //end submit
       }); //end modal form button click
@@ -39,7 +42,7 @@
   <h1>Beer League Baseball Challenge</h1>
 
   <div class="tableWrap">
-   <table class="table table-striped table-bordered">
+   <table class="table table-striped table-bordered" id="standingsTable">
     <caption>Standings</caption>
     <thead>
      <tr>
