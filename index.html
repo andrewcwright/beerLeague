@@ -12,13 +12,56 @@
     <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" type="text/css" href="css/bootstrap-form.css">
     <!-- Javascript -->
-    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-form.js"></script>
+    <script src="js/jquery.validate.js"></script>
     <script>
      $(document).ready(function() {
-      $('form').form(); //form validation
+        //form validation
+        $('#modalSubmit').click( function(){
+          $('.control-group').removeClass('success error');
+          validate.resetForm();
+        });
 
+
+        var validate = $("#modal_form").validate({
+          rules: {
+            teamName: {
+              minlength: 2,
+              required: true
+            },
+            mgr_fname: {
+              minlength: 2,
+              required: true
+            },
+            mgr_lname: {
+              minlength: 2,
+              required: true
+            },
+            phone: {
+              digits: true,
+              required: true,
+              rangelength: [10, 10]
+            },
+            sponsor: {
+              minlength: 2,
+              required: true
+            },
+            zip: {       
+              digits: true,
+              required: true,
+              rangelength: [5, 5]
+            }
+          },
+          highlight: function(element) {
+            $(element).closest('.control-group').removeClass('success').addClass('error');
+          },
+          success: function(element) {
+            element
+            .text('OK!').addClass('valid')
+            .closest('.control-group').removeClass('error').addClass('success');
+          }
+        });
       // Declare Variables
       var league_array = [];
 
@@ -32,13 +75,15 @@
           team_array.push($(this).val());
         }); //end teamInput each
         
-        league_array.push(team_array);
+        $('#teamTable').append("<tr><td>" + team_array[0] + "</td><td>" + 0 + "</td><td>" + 0 + "</td><td>" + 0 + "</td></tr>");
         
-        $('#teamTable').append("<tr><td>" + league_array[0][0] + "</td></tr>");
+        league_array.push(team_array);
         
         $('#myModal').modal('hide');
 
-        return false;
+        $(this).closest('form').find("input[type=text], textarea").val("");
+        // console.log(league_array);
+        // return false;
       }); //end modal form button click
      
       //function to test storage of data
@@ -67,12 +112,6 @@
      </tr>
     </thead>
     <tbody id="teamTable">
-     <tr>
-      <td>Team 1</td>
-      <td>3</td>
-      <td>4</td>
-      <td>0.428</td>
-     </tr>
     </tbody>
    </table>     
   </div>
@@ -87,7 +126,7 @@
     <h3 id="myModalLabel">Team Information</h3>
    </div>
    <div class="modal-body">
-    <form class="form form-horizontal">
+    <form id="modal_form" class="form form-horizontal">
      <div class="control-group">
        <label class="control-label" for="inputTeamName">Team Name</label>
        <div class="controls">
@@ -103,29 +142,29 @@
      <div class="control-group">
        <label class="control-label" for="inputMgrLastName">Manager Last Name</label>
        <div class="controls">
-         <input name="lastName" type="text" id="inputMgrLastName" class="teamInput" placeholder="Manager Last Name" data-error="This field is required." required>
+         <input name="lastName" type="text" id="inputMgrLastName" class="teamInput" placeholder="Manager Last Name">
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputPhoneNumber">Phone Number</label>
        <div class="controls">
-         <input name="phoneNumber" type="tel" id="inputPhoneNumber" class="teamInput" placeholder="Phone Number" pattern="[0-9]{10}" data-error="Please give a correct phone number." required>
+         <input name="phoneNumber" type="text" id="inputPhoneNumber" class="teamInput" placeholder="Phone Number">
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputSponsor">Sponsor</label>
        <div class="controls">
-         <input name="sponsor" type="text" id="inputSponsor" class="teamInput" placeholder="Sponsor" data-error="This field is required." required>
+         <input name="sponsor" type="text" id="inputSponsor" class="teamInput" placeholder="Sponsor">
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputZip">Zip Code</label>
        <div class="controls">
-         <input name="zip" type="number" id="inputZip" class="teamInput" placeholder="Zip Code" value="0" min="1000" max="99999" data-error="Please give a valid zip code." required>
+         <input name="zip" type="text" id="inputZip" class="teamInput" placeholder="Zip Code">
        </div>
      </div>
-       <div class="controls">
-       <button id="modalSubmit" type="submit" class="btn btn-primary">Submit</button>
+     <div class="controls">
+       <button id="modalSubmit" type="submit" class="btn btn-primary" onclick="return false">Submit</button>
        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
      </div>
     </form> 
