@@ -18,27 +18,21 @@
     <script>
      $(document).ready(function() {
         //form validation
-        $('#modalSubmit').click( function(){
-          $('.control-group').removeClass('success error');
-          validate.resetForm();
-        });
-
-
         var validate = $("#modal_form").validate({
           rules: {
             teamName: {
               minlength: 2,
               required: true
             },
-            mgr_fname: {
+            firstName: {
               minlength: 2,
               required: true
             },
-            mgr_lname: {
+            lastName: {
               minlength: 2,
               required: true
             },
-            phone: {
+            phoneNumber: {
               digits: true,
               required: true,
               rangelength: [10, 10]
@@ -58,39 +52,81 @@
           },
           success: function(element) {
             element
-            .text('OK!').addClass('valid')
+            .text('Valid').addClass('valid')
             .closest('.control-group').removeClass('error').addClass('success');
           }
         });
+      
       // Declare Variables
       var league_array = [];
+      var team_counter = 1;
 
 
       // Function to collect team information and store it in an array
       $('#modalSubmit').click(function() {
-        
-        var team_array = [];
-        
-        $('.teamInput').each(function() {
-          team_array.push($(this).val());
-        }); //end teamInput each
-        
-        $('#teamTable').append("<tr><td>" + team_array[0] + "</td><td>" + 0 + "</td><td>" + 0 + "</td><td>" + 0 + "</td></tr>");
-        
-        league_array.push(team_array);
-        
-        $('#myModal').modal('hide');
+        if ($('#teamName').val() != "" && $('#firstName').val() != "" && $('#lastName').val() != "" && $('#phoneNumber').val() != "" && $('#sponsor').val() != "" && $('#zip').val() != "") {
+          var team_array = [];
+          
+          $('.teamInput').each(function() {
+            team_array.push($(this).val()); 
+          }); //end teamInput each
+          
+          league_array.push(team_array);
+          console.log(league_array);
 
-        $(this).closest('form').find("input[type=text], textarea").val("");
-        // console.log(league_array);
-        // return false;
-      }); //end modal form button click
-     
-      //function to test storage of data
-       $('#test').click(function(){
-       console.log(league_array[0]);
-       console.log(league_array[1]);
-      })
+          addTeam(team_array);
+          
+          //hides modal
+          $('#myModal').modal('hide');
+          //clears form
+        }; //end if
+          clearForm();
+          //reset form validation
+          $('.control-group').removeClass('success error');
+          //.validate.resetForm();
+      }); //end modal form submit button click
+      
+      // function to add all teams to the schedule
+      function addTeam(team_array) {
+        $('#teamTable').append("<tr><td>" + team_array[0] + "</td><td>" + 0 + "</td><td>" + 0 + "</td><td>" + 0 + "</td></tr>");
+      };
+
+      //function to clear the team input form
+      function clearForm() {
+        $('.teamInput').each(function() {
+          $(this).val("");
+        });
+      };
+
+      //function to test stuff and things
+      $('#test').click(function(){
+       var JSON_array = JSON.stringify(league_array);
+       console.log(JSON_array);
+          $.ajax({
+           type: "POST",
+           url: "http://www.nashvillecoder.me/awright/shared/",
+           data: {
+             "file": "http://www.nashvillecoder.me/awright/shared/beerLeague.json",
+             "path": "/awright/shared",
+             "data": {
+               "name": "League Name",
+               "owner": "Gary Naranjo",
+               "teams": ["Sluggers","Sharks","Cyclones","Thunderheads","Quakers"]
+             }
+           },
+           success: function (data) {
+             console.log(data);
+           },
+           dataType: "json"
+          }); //end ajax post
+          $.ajax({
+            url: 'http://www.nashvillecoder.me/shared/market.json',
+            success: function (data) {
+              console.log(data);
+            }
+
+          });//end ajax get
+      });//end test click
 
      }); //end document ready
     </script>
@@ -128,39 +164,39 @@
    <div class="modal-body">
     <form id="modal_form" class="form form-horizontal">
      <div class="control-group">
-       <label class="control-label" for="inputTeamName">Team Name</label>
+       <label class="control-label" for="teamName">Team Name</label>
        <div class="controls">
-         <input name="teamName" type="text" id="inputTeamName" class="teamInput" placeholder="Team Name" data-error="This field is required." required>
+         <input name="teamName" type="text" id="teamName" class="teamInput" placeholder="Team Name">
        </div>
      </div>
      <div class="control-group">
-       <label class="control-label" for="inputMgrFirstName">Manager First Name</label>
+       <label class="control-label" for="firstName">Manager First Name</label>
        <div class="controls">
-         <input name="firstName" type="text" id="inputMgrFirstName" class="teamInput" placeholder="Manager First Name" data-error="This field is required." required>
+         <input name="firstName" type="text" id="firstName" class="teamInput" placeholder="Manager First Name">
        </div>
      </div>
      <div class="control-group">
-       <label class="control-label" for="inputMgrLastName">Manager Last Name</label>
+       <label class="control-label" for="lastName">Manager Last Name</label>
        <div class="controls">
-         <input name="lastName" type="text" id="inputMgrLastName" class="teamInput" placeholder="Manager Last Name">
+         <input name="lastName" type="text" id="lastName" class="teamInput" placeholder="Manager Last Name">
        </div>
      </div>
      <div class="control-group">
        <label class="control-label" for="inputPhoneNumber">Phone Number</label>
        <div class="controls">
-         <input name="phoneNumber" type="text" id="inputPhoneNumber" class="teamInput" placeholder="Phone Number">
+         <input name="phoneNumber" type="text" id="phoneNumber" class="teamInput" placeholder="Phone Number">
        </div>
      </div>
      <div class="control-group">
-       <label class="control-label" for="inputSponsor">Sponsor</label>
+       <label class="control-label" for="sponsor">Sponsor</label>
        <div class="controls">
-         <input name="sponsor" type="text" id="inputSponsor" class="teamInput" placeholder="Sponsor">
+         <input name="sponsor" type="text" id="sponsor" class="teamInput" placeholder="Sponsor">
        </div>
      </div>
      <div class="control-group">
-       <label class="control-label" for="inputZip">Zip Code</label>
+       <label class="control-label" for="zip">Zip Code</label>
        <div class="controls">
-         <input name="zip" type="text" id="inputZip" class="teamInput" placeholder="Zip Code">
+         <input name="zip" type="text" id="zip" class="teamInput" placeholder="Zip Code">
        </div>
      </div>
      <div class="controls">
