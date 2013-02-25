@@ -44,11 +44,26 @@
         [ [1, 2], [3, 8], [4, 7], [5, 6] ],
       ];
 
-      $.ajax({type: 'GET', url: 'https://beerleague-dxvdi.backliftapp.com/backliftapp/team', success: function (data) {
-       league_array.push(data); 
-       printTeam(data); // populates table on load
-       //sortTable(); // loads and triggers tablesorter on an empty table      
-      }}); 
+      $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
+       league_array = data; 
+       printTeam(data); // populates table on load   
+      }});
+
+      function printTeam(data){     //populates table on load. Contains popover content. 
+        $('#teamTable').html(''); 
+        for (var index = 0; index < data.length; index++) { 
+          $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + 1234 + '</td></tr>').appendTo('#teamTable');
+            };
+      }; //end printTeam func
+
+      //Button to delete team
+      $('table').on('click', '.deleteTeam', function() {
+        $.ajax({
+          type: 'DELETE', 
+          url: 'backliftapp/team/' + $(this).closest('tr').attr('id')
+        }); //end ajax delete
+        $(this).closest('tr').remove();
+      }); //end delete team click
 
       //form validation
       var validate = $("#modal_form").validate({
@@ -116,7 +131,7 @@
       $('#modalSubmit').click(function(){
           $.ajax({
            type: "POST",
-           url: "https://beerleague-dxvdi.backliftapp.com/backliftapp/team",
+           url: "backliftapp/team",
            dataType: "json",
            data: {
               "teamName": $('#teamName').val(),
