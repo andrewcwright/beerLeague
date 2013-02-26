@@ -66,48 +66,54 @@
           type: 'DELETE', 
           url: 'backliftapp/team/' + $(this).closest('tr').attr('id')
         }); //end ajax delete
-        $(this).closest('tr').remove();
+        $(this).closest('tr').remove(); //delete this row
+        $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) { //refresh league_array and show button if teams < 8
+         league_array = data; 
+         if (league_array.length < 8) {
+          $('#teamAdd').css("visibility", "visible");
+         }
+      }});
       }); //end delete team click
 
       //form validation
-      var validate = $("#modal_form").validate({
-        rules: {
-          teamName: {
-            minlength: 2,
-            required: true
-          },
-          firstName: {
-            minlength: 2,
-            required: true
-          },
-          lastName: {
-            minlength: 2,
-            required: true
-          },
-          phoneNumber: {
-            digits: true,
-            required: true,
-            rangelength: [10, 10]
-          },
-          sponsor: {
-            minlength: 2,
-            required: true
-          },
-          zip: {       
-            digits: true,
-            required: true,
-            rangelength: [5, 5]
-          }
-        },
-        highlight: function(element) {
-          $(element).closest('.control-group').removeClass('success').addClass('error');
-        },
-        success: function(element) {
-          element
-          .text('Valid').addClass('valid')
-          .closest('.control-group').removeClass('error').addClass('success');
-        }
-      }); //end validation
+      // var validate = $("#modal_form").validate({
+      //   rules: {
+      //     teamName: {
+      //       minlength: 2,
+      //       required: true
+      //     },
+      //     firstName: {
+      //       minlength: 2,
+      //       required: true
+      //     },
+      //     lastName: {
+      //       minlength: 2,
+      //       required: true
+      //     },
+      //     phoneNumber: {
+      //       digits: true,
+      //       required: true,
+      //       rangelength: [10, 10]
+      //     },
+      //     sponsor: {
+      //       minlength: 2,
+      //       required: true
+      //     },
+      //     zip: {       
+      //       digits: true,
+      //       required: true,
+      //       rangelength: [5, 5]
+      //     }
+      //   },
+      //   highlight: function(element) {
+      //     $(element).closest('.control-group').removeClass('success').addClass('error');
+      //   },
+      //   success: function(element) {
+      //     element
+      //     .text('Valid').addClass('valid')
+      //     .closest('.control-group').removeClass('error').addClass('success');
+      //   }
+      // }); //end validation
       
       // Verify if form is valid
       function validForm() {
@@ -148,9 +154,9 @@
             if (league_array.length > 7) {
               $('#teamAdd').css("visibility", "hidden");
             }
+            clearForm();
            }
           }); //end ajax post
-          clearForm();
       });//end test click
 
      }); //end document ready
