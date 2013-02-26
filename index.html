@@ -18,7 +18,7 @@
     <script>
      $(document).ready(function() {
       // Declare Variables
-      var league_array = [];
+      league_array = [];
       var team_num = 0;
       var sched4 = [ 
         [ [1, 4], [2, 3] ],
@@ -46,15 +46,19 @@
 
       $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
        league_array = data; 
-       printTeam(data); // populates table on load   
+       printTeam(data);
+       if (league_array.length > 7) {
+        $('#teamAdd').css("visibility", "hidden");
+       }
       }});
-
-      function printTeam(data){     //populates table on load. Contains popover content. 
+      
+      // function to print team data to table
+      function printTeam(data){
         $('#teamTable').html(''); 
         for (var index = 0; index < data.length; index++) { 
           $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + 1234 + '</td></tr>').appendTo('#teamTable');
             };
-      }; //end printTeam func
+      };
 
       //Button to delete team
       $('table').on('click', '.deleteTeam', function() {
@@ -115,11 +119,6 @@
         });
       };
 
-      // function to add all teams to the schedule
-      function addTeam(team_array) {
-        $('#teamTable').append("<tr><td>" + team_array[0] + "</td><td>" + 0 + "</td><td>" + 0 + "</td><td>" + 0 + "</td></tr>");
-      };
-
       //function to clear the team input form
       function clearForm() {
         $('.teamInput').each(function() {
@@ -127,7 +126,7 @@
         });
       };
 
-      //function to test stuff and things
+      //function to submit team information to JSON object on server
       $('#modalSubmit').click(function(){
           $.ajax({
            type: "POST",
@@ -145,8 +144,13 @@
            },
            success: function (data) {
              league_array.push(data);
+             printTeam(league_array);
+            if (league_array.length > 7) {
+              $('#teamAdd').css("visibility", "hidden");
+            }
            }
           }); //end ajax post
+          clearForm();
       });//end test click
 
      }); //end document ready
@@ -167,7 +171,7 @@
       <div class="nav-collapse collapse">
         <ul class="nav">
           <li class="">
-            <a href="#myModal" role="button" data-toggle="modal">Add a Team</a>
+            <a href="#myModal" id="teamAdd" role="button" data-toggle="modal">Add a Team</a>
           </li>
         </ul>
       </div>
@@ -196,9 +200,6 @@
    </table>     
   </div>
 
-  <!-- Button to trigger modal -->
-  <a href="#myModal" role="button" class="btn" data-toggle="modal">Add a Team</a>
-  <button id="test" type="submit" class="btn" onclick="return false">test</button>
   <!-- Modal -->
   <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-header">
