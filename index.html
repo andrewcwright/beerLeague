@@ -108,7 +108,8 @@
        console.log(league_array[0]);
        console.log(league_array[1]);
       })
-
+    $("#popover").popover({trigger: 'hover'});
+      
      }); //end document ready
     </script>
 </head>
@@ -127,6 +128,14 @@
       <th>L</th>
       <th>%</th>
      </tr>
+     <tr>
+      <td>
+        <a id="popover" title="Team Info" data-content="Manager Name">Team Name</a>
+      </td>
+      <td>0</td>
+      <td>0</td>
+      <td>.000</td>
+    </tr>
     </thead>
     <tbody id="teamTable">
     </tbody>
