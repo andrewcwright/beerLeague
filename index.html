@@ -64,15 +64,20 @@
       $('table').on('click', '.deleteTeam', function() {
         $.ajax({
           type: 'DELETE', 
-          url: 'backliftapp/team/' + $(this).closest('tr').attr('id')
-        }); //end ajax delete
+          url: 'backliftapp/team/' + $(this).closest('tr').attr('id'),
+          success: function (data) {
         $(this).closest('tr').remove(); //delete this row
         $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) { //refresh league_array and show button if teams < 8
-         league_array = data; 
-         if (league_array.length < 8) {
+         league_array = data;
+         printTeam(data); 
+         if (league_array.length <= 8) {
           $('#teamAdd').css("visibility", "visible");
-         }
-      }});
+         };
+        }}); //end ajax get
+            
+          }}); //end ajax delete
+        
+         
       }); //end delete team click
 
       //form validation
@@ -178,6 +183,9 @@
         <ul class="nav">
           <li class="">
             <a href="#myModal" id="teamAdd" role="button" data-toggle="modal">Add a Team</a>
+          </li>
+          <li class="">
+            <a href="#" id="calcWeek" role="button" data-toggle="modal">Calculate Week</a>
           </li>
         </ul>
       </div>
