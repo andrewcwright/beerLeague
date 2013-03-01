@@ -193,10 +193,10 @@
       $('#calcWeek').click(function() {
         $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
           for (var i = 0; i < schedule[week].length; i++) {
-            randomnumber1=1;
-            randomnumber2=2;
-            while (var randomnumber1=randMath.floor(Math.random()*11);
+            do {
+            var randomnumber1=Math.floor(Math.random()*11);
             var randomnumber2=Math.floor(Math.random()*11);
+            } while (randomnumber1 == randomnumber2);
             $('#week' + (week+1) + 'score' + (i+1) ).html("");
             $('#week' + (week+1) + 'score' + (i+1) ).append(randomnumber1 + '-' + randomnumber2);
           }; //end round for loop
