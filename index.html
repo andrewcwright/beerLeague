@@ -36,6 +36,7 @@
         for (var index = 0; index < data.length; index++) { 
           $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + data[index].winPer + '</td></tr>').appendTo('#teamTable');
             };
+            console.log('WOOOHOOOOOO printing');
       };
 
       //Button to delete team
@@ -192,15 +193,57 @@
       //function to calculate week of play
       $('#calcWeek').click(function() {
         $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
+
+          league_array = data;
+
           for (var i = 0; i < schedule[week].length; i++) {
             do {
+            
             var randomnumber1=Math.floor(Math.random()*11);
             var randomnumber2=Math.floor(Math.random()*11);
+
             } while (randomnumber1 == randomnumber2);
+
             $('#week' + (week+1) + 'score' + (i+1) ).html("");
             $('#week' + (week+1) + 'score' + (i+1) ).append(randomnumber1 + '-' + randomnumber2);
+
+            if (randomnumber1 > randomnumber2) {
+              $.ajax({
+                type: 'PUT', 
+                url: 'backliftapp/team/' + data[schedule[week][i][0]-1].id,
+                success: function (data) {
+                  wins = "WHATTHEHELL?";
+                }
+              }); //end ajax post
+              $.ajax({
+                type: 'PUT', 
+                url: 'backliftapp/team/' + data[schedule[week][i][1]-1].id,
+                success: function (data) {
+                  losses = data.losses + 1;
+                }
+              }); //end ajax post
+            }
+            else {
+              $.ajax({
+                type: 'PUT', 
+                url: 'backliftapp/team/' + data[schedule[week][i][0]-1].id,
+                success: function (data) {
+                  data.losses = data.losses + 1;
+                }
+              }); //end ajax post
+              $.ajax({
+                type: 'PUT', 
+                url: 'backliftapp/team/' + data[schedule[week][i][1]-1].id,
+                success: function (data) {
+                  data. wins = data.wins + 1;
+                }
+              }); //end ajax post
+            }; //end if
           }; //end round for loop
             week++;
+            $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
+            printTeam(data);
+            }}); //end ajax get
         }}); //end ajax get
       }); //end calcweek click
      }); //end document ready
