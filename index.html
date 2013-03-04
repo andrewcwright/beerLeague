@@ -39,6 +39,17 @@
             console.log('WOOOHOOOOOO printing');
       };
 
+      // function to update standings on click
+      $('#updateStandings').click(function() {
+      $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
+        $('#teamTable').html(''); 
+        
+        for (var index = 0; index < data.length; index++) { 
+          $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + data[index].winPer + '</td></tr>').appendTo('#teamTable');
+        };
+      }});
+      }); //end updateStandings click
+
       //Button to delete team
       $('table').on('click', '.deleteTeam', function() {
         $.ajax({
@@ -197,6 +208,8 @@
           league_array = data;
 
           for (var i = 0; i < schedule[week].length; i++) {
+          
+
             do {
             
             var randomnumber1=Math.floor(Math.random()*11);
@@ -210,40 +223,53 @@
             if (randomnumber1 > randomnumber2) {
               $.ajax({
                 type: 'PUT', 
-                url: 'backliftapp/team/' + data[schedule[week][i][0]-1].id,
+                url: 'backliftapp/team/' + league_array[schedule[week][i][0]-1].id,
+                dataType: "JSON",
+                data: {
+                  wins: +league_array[schedule[week][i][0]-1].wins + 1
+                },
                 success: function (data) {
-                  wins = "WHATTHEHELL?";
+                  console.log(data)
                 }
               }); //end ajax post
               $.ajax({
                 type: 'PUT', 
-                url: 'backliftapp/team/' + data[schedule[week][i][1]-1].id,
+                url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
+                dataType: "JSON",
+                data: {
+                  losses: +league_array[schedule[week][i][1]-1].losses + 1   
+                },
                 success: function (data) {
-                  losses = data.losses + 1;
+                  console.log(data);
                 }
               }); //end ajax post
             }
             else {
               $.ajax({
                 type: 'PUT', 
-                url: 'backliftapp/team/' + data[schedule[week][i][0]-1].id,
+                url: 'backliftapp/team/' + league_array[schedule[week][i][0]-1].id,
+                dataType: "JSON",
+                data: {
+                  losses: +league_array[schedule[week][i][0]-1].losses + 1              
+                },
                 success: function (data) {
-                  data.losses = data.losses + 1;
+                  console.log(data)
                 }
               }); //end ajax post
               $.ajax({
                 type: 'PUT', 
-                url: 'backliftapp/team/' + data[schedule[week][i][1]-1].id,
+                url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
+                dataType: "JSON",
+                data: {
+                  wins: +league_array[schedule[week][i][0]-1].wins + 1
+                },
                 success: function (data) {
-                  data. wins = data.wins + 1;
+                  console.log(data);
                 }
               }); //end ajax post
             }; //end if
           }; //end round for loop
-            week++;
-            $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
-            printTeam(data);
-            }}); //end ajax get
+            week++
         }}); //end ajax get
       }); //end calcweek click
      }); //end document ready
@@ -272,6 +298,9 @@
           <li class="">
             <a href="#sTableWrap" id="calcWeek" role="button">Calculate Week</a>
           </li>
+          <li class="">
+            <a href="#teamTable" id="updateStandings" role="button">Update Standings</a>
+          </li>          
         </ul>
       </div>
     </div>
