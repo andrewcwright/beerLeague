@@ -15,6 +15,7 @@
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.validate.js"></script>
+    <script src="js/stupidtable.min.js"></script>
     <script>
      $(document).ready(function() {
       // Declare Variables
@@ -37,6 +38,8 @@
           $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + data[index].winPer + '</td></tr>').appendTo('#teamTable');
             };
       };
+
+      $("#simpleTable").stupidtable(); //sort table
 
       //Button to delete team
       $('table').on('click', '.deleteTeam', function() {
@@ -244,14 +247,14 @@
  <div class="span12 wrapper">
   <h1>Standings</h1>
   <div class="tableWrap">
-   <table class="table table-striped table-bordered">
+   <table id="simpleTable" class="table table-striped table-bordered">
 <!--     <caption>Standings</caption>  -->   
     <thead>
      <tr>
-      <th>Team</th>
-      <th>W</th>
+      <th data-sort="string">Team</th>
+      <th data-sort="int">W</th>
       <th>L</th>
-      <th>%</th>
+      <th data-sort="float">%</th>
      </tr>
     </thead>
     <tbody id="teamTable">
