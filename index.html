@@ -15,12 +15,13 @@
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.validate.js"></script>
+    <script src="js/stupidtable.min.js"></script>
     <script>
      $(document).ready(function() {
-      // Declare Variables
+      // Declare Variables  
       league_array = [];
       schedule = [];
-      week = 0;
+      week = 0;  
 
       $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
        league_array = data; 
@@ -66,6 +67,8 @@
         }}); //end ajax get
         }}); //end ajax delete
       }); //end delete team click
+
+      $("#simpleTable").stupidtable(); //sort table
 
       //form validation
       // var validate = $("#modal_form").validate({
@@ -126,31 +129,34 @@
 
       //function to submit team information to JSON object on server
       $('#modalSubmit').click(function(){
-          $.ajax({
-           type: "POST",
-           url: "backliftapp/team",
-           dataType: "json",
-           data: {
-              "teamName": $('#teamName').val(),
-              "firstName": $('#firstName').val(),
-              "lastName": $('#lastName').val(),
-              "phoneNumber": $('#phoneNumber').val(),
-              "sponsor": $('#sponsor').val(),
-              "zip": $('#zip').val(),
-              "wins": 0,
-              "losses": 0,
-              "winPer": 0
-           },
-           success: function (data) {
-             league_array.push(data);
-             printTeam(league_array);
+        //var wins = 0;
+        //var losses = 0;
+        //var winPer = wins/(wins+losses);
+        $.ajax({
+          type: "POST",
+          url: "backliftapp/team",
+          dataType: "json",
+          data: {
+            "teamName": $('#teamName').val(),
+            "firstName": $('#firstName').val(),
+            "lastName": $('#lastName').val(),
+            "phoneNumber": $('#phoneNumber').val(),
+            "sponsor": $('#sponsor').val(),
+            "zip": $('#zip').val(),
+            "wins": wins,
+            "losses": losses,
+            "winPer": wins/(wins+losses)
+          },
+          success: function (data) {
+            league_array.push(data);
+            printTeam(league_array);
             if (league_array.length > 7) {
               $('#teamAdd').css("visibility", "hidden");
             }
             clearForm();
-           }
-          }); //end ajax post
-      });//end test click
+          }
+         }); //end ajax post
+        });//end test click
       var sched4 = [ 
         [ [1, 4], [2, 3] ],
         [ [1, 3], [2, 4] ],
@@ -315,12 +321,12 @@
  <div class="span12 wrapper">
   <h1>Standings</h1>
   <div class="tableWrap">
-   <table class="table table-striped table-bordered">
+   <table id="simpleTable" class="table table-striped table-bordered">
 <!--     <caption>Standings</caption>  -->   
     <thead>
      <tr>
       <th>Team</th>
-      <th>W</th>
+      <th data-sort="int">W</th>
       <th>L</th>
       <th>%</th>
      </tr>
