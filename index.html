@@ -114,6 +114,9 @@
 
       //function to submit team information to JSON object on server
       $('#modalSubmit').click(function(){
+          var wins = Math.floor(Math.random()*11);
+          var losses = Math.floor(Math.random()*11);
+          var winPer = wins/(wins+losses);
           $.ajax({
            type: "POST",
            url: "backliftapp/team",
@@ -125,9 +128,9 @@
               "phoneNumber": $('#phoneNumber').val(),
               "sponsor": $('#sponsor').val(),
               "zip": $('#zip').val(),
-              "wins": 0,
-              "losses": 0,
-              "winPer": 0
+              "wins": wins,
+              "losses": losses,
+              "winPer": winPer
            },
            success: function (data) {
              league_array.push(data);
