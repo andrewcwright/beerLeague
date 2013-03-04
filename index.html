@@ -203,21 +203,22 @@
                 
       //function to calculate week of play
       $('#calcWeek').click(function() {
-        $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
-
-          league_array = data;
 
           for (var i = 0; i < schedule[week].length; i++) {
+
+          $.ajax({type: 'GET', url: 'backliftapp/team', async: false, success: function (data) {
+            league_array = data;
+          }}); //end ajax get
           
-            // var randomnumber1 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][0]-1].teamName + "Week: " + (week+1) + "Round: " + (schedule[week][i]+1));
-            // var randomnumber2 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][1]-1].teamName + "Week: " + (week+1) + "Round: " + (schedule[week][i]+1));
+            var randomnumber1 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][0]-1].teamName + " Week: " + (week+1) + " Round: " + (schedule[week][i]+1) + "");
+            var randomnumber2 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][1]-1].teamName + " Week: " + (week+1) + " Round: " + (schedule[week][i]+1) + "");
 
-            do {
+            // do {
             
-            var randomnumber1=Math.floor(Math.random()*11);
-            var randomnumber2=Math.floor(Math.random()*11);
+            // var randomnumber1=Math.floor(Math.random()*11);
+            // var randomnumber2=Math.floor(Math.random()*11);
 
-            } while (randomnumber1 == randomnumber2);
+            // } while (randomnumber1 == randomnumber2);
 
             $('#week' + (week+1) + 'score' + (i+1) ).html("");
             $('#week' + (week+1) + 'score' + (i+1) ).append(randomnumber1 + '-' + randomnumber2);
@@ -227,22 +228,26 @@
                 type: 'PUT', 
                 url: 'backliftapp/team/' + league_array[schedule[week][i][0]-1].id,
                 dataType: "JSON",
+                async: false,
                 data: {
-                  wins: +league_array[schedule[week][i][0]-1].wins + 1
+                  wins: +league_array[schedule[week][i][0]-1].wins + 1,
+                  winPer: (+league_array[schedule[week][i][0]-1].wins) / (+league_array[schedule[week][i][0]-1].wins + +league_array[schedule[week][i][0]-1].losses + 1)
                 },
                 success: function (data) {
                   console.log(data)
-                }
-              }); //end ajax post
-              $.ajax({
-                type: 'PUT', 
-                url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
-                dataType: "JSON",
-                data: {
-                  losses: +league_array[schedule[week][i][1]-1].losses + 1   
-                },
-                success: function (data) {
-                  console.log(data);
+                  $.ajax({
+                    type: 'PUT', 
+                    url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
+                    dataType: "JSON", 
+                    async: false,
+                    data: {
+                      losses: +league_array[schedule[week][i][1]-1].losses + 1,
+                      winPer: (+league_array[schedule[week][i][1]-1].wins) / (+league_array[schedule[week][i][1]-1].wins + +league_array[schedule[week][i][1]-1].losses + 1)                       
+                    },
+                    success: function (data) {
+                      console.log(data);
+                    }
+                  }); //end ajax post
                 }
               }); //end ajax post
             }
@@ -251,28 +256,31 @@
                 type: 'PUT', 
                 url: 'backliftapp/team/' + league_array[schedule[week][i][0]-1].id,
                 dataType: "JSON",
+                async: false,
                 data: {
-                  losses: +league_array[schedule[week][i][0]-1].losses + 1              
+                  losses: +league_array[schedule[week][i][0]-1].losses + 1,
+                  winPer: (+league_array[schedule[week][i][0]-1].wins) / (+league_array[schedule[week][i][0]-1].wins + +league_array[schedule[week][i][0]-1].losses + 1)             
                 },
                 success: function (data) {
                   console.log(data)
+                  $.ajax({
+                    type: 'PUT', 
+                    url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
+                    dataType: "JSON",
+                    async: false,
+                    data: {
+                      wins: +league_array[schedule[week][i][1]-1].wins + 1,
+                      winPer: (+league_array[schedule[week][i][1]-1].wins) / (+league_array[schedule[week][i][1]-1].wins + +league_array[schedule[week][i][1]-1].losses + 1)
+                    },
+                    success: function (data) {
+                      console.log(data);
+                    }
+                  }); //end ajax post
                 }
               }); //end ajax post
-              $.ajax({
-                type: 'PUT', 
-                url: 'backliftapp/team/' + league_array[schedule[week][i][1]-1].id,
-                dataType: "JSON",
-                data: {
-                  wins: +league_array[schedule[week][i][0]-1].wins + 1
-                },
-                success: function (data) {
-                  console.log(data);
-                }
-              }); //end ajax post
-            }; //end if
-          }; //end round for loop
+            }; //end else
+          }; //end for loop
             week++
-        }}); //end ajax get
       }); //end calcweek click
      }); //end document ready
     </script>
