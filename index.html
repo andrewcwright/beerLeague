@@ -35,9 +35,10 @@
       function printTeam(data){
         $('#teamTable').html(''); 
         for (var index = 0; index < data.length; index++) { 
+          if (data[index].teamName != "Bye") {
           $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + data[index].winPer + '</td></tr>').appendTo('#teamTable');
-            };
-            console.log('WOOOHOOOOOO printing');
+          }; //end bye if
+        }; //end for
       };
 
       // function to update standings on click
@@ -46,9 +47,11 @@
         $('#teamTable').html(''); 
         
         for (var index = 0; index < data.length; index++) { 
+          if (data[index].teamName != "Bye") {
           $('<tr id="' + data[index].id + '"><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName + '</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close deleteTeam" style="margin-right: 10px;">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + data[index].winPer + '</td></tr>').appendTo('#teamTable');
-        };
-      }});
+          }; //end bye if
+         }; //end for
+      }}); //end ajax
       }); //end updateStandings click
 
       //Button to delete team
@@ -70,45 +73,45 @@
 
       $("#simpleTable").stupidtable(); //sort table
       
-      //form validation
-      // var validate = $("#modal_form").validate({
-      //   rules: {
-      //     teamName: {
-      //       minlength: 2,
-      //       required: true
-      //     },
-      //     firstName: {
-      //       minlength: 2,
-      //       required: true
-      //     },
-      //     lastName: {
-      //       minlength: 2,
-      //       required: true
-      //     },
-      //     phoneNumber: {
-      //       digits: true,
-      //       required: true,
-      //       rangelength: [10, 10]
-      //     },
-      //     sponsor: {
-      //       minlength: 2,
-      //       required: true
-      //     },
-      //     zip: {       
-      //       digits: true,
-      //       required: true,
-      //       rangelength: [5, 5]
-      //     }
-      //   },
-      //   highlight: function(element) {
-      //     $(element).closest('.control-group').removeClass('success').addClass('error');
-      //   },
-      //   success: function(element) {
-      //     element
-      //     .text('Valid').addClass('valid')
-      //     .closest('.control-group').removeClass('error').addClass('success');
-      //   }
-      // }); //end validation
+      form validation
+      var validate = $("#modal_form").validate({
+        rules: {
+          teamName: {
+            minlength: 2,
+            required: true
+          },
+          firstName: {
+            minlength: 2,
+            required: true
+          },
+          lastName: {
+            minlength: 2,
+            required: true
+          },
+          phoneNumber: {
+            digits: true,
+            required: true,
+            rangelength: [10, 10]
+          },
+          sponsor: {
+            minlength: 2,
+            required: true
+          },
+          zip: {       
+            digits: true,
+            required: true,
+            rangelength: [5, 5]
+          }
+        },
+        highlight: function(element) {
+          $(element).closest('.control-group').removeClass('success').addClass('error');
+        },
+        success: function(element) {
+          element
+          .text('Valid').addClass('valid')
+          .closest('.control-group').removeClass('error').addClass('success');
+        }
+      }); //end validation
       
       // Verify if form is valid
       function validForm() {
@@ -180,17 +183,50 @@
       //function to create schedule
       $('#calcSchedule').click(function() {
         $('<div id="sTableWrap" class="span12 wrapper"><h1>Schedule/Results</h1></div>').appendTo('#scheduleWrap');
-        if (league_array.length < 4) {
+          if (league_array.length < 4) {
           alert('Must have at least 4 teams to continue!');
           }
+
           else if (league_array.length == 4) {
             schedule = sched4;
           }
-          else if (league_array.length > 6) {
-            schedule = sched8;
+
+          else if (league_array.length == 5) {
+            schedule=sched6;
+            $.ajax({
+             type: "POST",
+             url: "backliftapp/team",
+             dataType: "json",
+             async: false,
+             data: {
+                "teamName": "Bye"
+             },
+             success: function (data) {
+             }
+            }); //end ajax post
           }
-          else {
+
+          else if (league_array.length == 6) {
             schedule = sched6;
+          }
+
+          else if (league_array.length == 7) {
+            schedule=sched8;
+            $.ajax({
+             type: "POST",
+             url: "backliftapp/team",
+             dataType: "json",
+             async: false,
+             data: {
+                "teamName": "Bye"
+             },
+             success: function (data) {
+             }
+            }); //end ajax post
+          }
+
+          else {
+            schedule = sched8;
           };
 
         $.ajax({type: 'GET', url: 'backliftapp/team', success: function (data) {
@@ -213,6 +249,8 @@
             league_array = data;
           }}); //end ajax get
           
+          if (league_array[schedule[week][i][0]-1].teamName && league_array[schedule[week][i][1]-1].teamName != "Bye") {
+
             var randomnumber1 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][0]-1].teamName + " Week: " + (week+1) + " Round: " + (schedule[week][i]+1) + "");
             var randomnumber2 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][1]-1].teamName + " Week: " + (week+1) + " Round: " + (schedule[week][i]+1) + "");
 
@@ -282,6 +320,7 @@
                 }
               }); //end ajax post
             }; //end else
+           }; //end bye if
           }; //end for loop
             week++
       }); //end calcweek click
@@ -332,7 +371,7 @@
      <tr>
       <th data-sort="string">Team</th>
       <th data-sort="int">W</th>
-      <th>L</th>
+      <th data-sort="int">L</th>
       <th data-sort="float">%</th>
      </tr>
     </thead>
