@@ -438,15 +438,15 @@
 
             if (league_array[schedule[week][i][0] - 1].teamName && league_array[schedule[week][i][1] - 1].teamName != "Bye") {
 
+              do {
+
               var randomnumber1 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][0] - 1].teamName + " Week: " + (week + 1) + " Round: " + (i + 1));
               var randomnumber2 = prompt("Please enter the score for Team: " + league_array[schedule[week][i][1] - 1].teamName + " Week: " + (week + 1) + " Round: " + (i + 1));
+              if (+randomnumber1 == +randomnumber2) {
+                alert("TIES ARE NOT AN OPTION, please enter scores again");
+              };
 
-              // do {
-
-              // var randomnumber1=Math.floor(Math.random()*11);
-              // var randomnumber2=Math.floor(Math.random()*11);
-
-              // } while (randomnumber1 == randomnumber2);
+              } while (+randomnumber1 == +randomnumber2);
 
               $('#week' + (week + 1) + 'score' + (i + 1)).html("");
               $('#week' + (week + 1) + 'score' + (i + 1)).append(randomnumber1 + '-' + randomnumber2);
