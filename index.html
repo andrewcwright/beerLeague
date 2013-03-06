@@ -467,7 +467,7 @@
                 }
               }); //end ajax post
 
-              if (randomnumber1 > randomnumber2) {
+              if (+randomnumber1 > +randomnumber2) {
                 $.ajax({
                   type: 'PUT',
                   url: 'backliftapp/team/' + league_array[schedule[week][i][0] - 1].id,
