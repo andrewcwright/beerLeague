@@ -272,69 +272,52 @@
           document.location.reload(true);
         }); //end newSeason click
 
-        //form validation
-        var validate = $("#modal_form").validate({
-          rules: {
-            teamName: {
-              minlength: 2,
-              maxlength: 32,
-              required: true
-            },
-            firstName: {
-              minlength: 2,
-              maxlength: 20,
-              required: true
-            },
-            lastName: {
-              minlength: 2,
-              maxlength: 20,
-              required: true
-            },
-            phoneNumber: {
-              digits: true,
-              required: true,
-              rangelength: [10, 10]
-            },
-            sponsor: {
-              minlength: 2,
-              maxlength: 20,
-              required: true
-            },
-            zip: {
-              digits: true,
-              required: true,
-              rangelength: [5, 5]
-            }
-          },
-          highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('error');
-          },
-          success: function (element) {
-            element.text('OK!').addClass('valid')
-              .closest('.control-group').removeClass('error').addClass('success');
-          }
-        }); //end validation func
-
-        // Verify if form is valid
-        function validForm() {
-          $('.control-group').each(function () {
-            if ($(this).hasClass('error')) {
-
-              return false;
-            }
-          });
-        };
-
         //function to clear the team input form
         function clearForm() {
           $('.teamInput').each(function () {
             $(this).val("");
           });
         };
+        //Begin validation
+        var validator = $("#modal_form").validate({
+               rules: {
+                teamName: 'required',
+                firstName : "required",
+                lastName : "required",
+                phoneNumber : {
+                      required : true,
+                      minlength : 10
+                  },
+                zip: {
+                      required : true,
+                      digits : true,
+                      minlength : 5,
+                      maxlength : 5
+                  },
+                sponsor : "required",
+                }, //end of rules
+               messages: {
+                phoneNumber : {
+                  minlength : "Make sure you entered a 10-digit number."
+               },
+                zip : {
+                  minlength : "Make sure you entered a 5 digit zipcode.",
+                  maxlength : "Make sure you entered a 5 digit zipcode."
+              }
+            }, //end messages
+        }); //end validate
+
+        $("#modalSubmit").click(function(){
+            if($('#modal_form').valid() == true){
+          addTeam();
+          $("#myModal").modal('hide');
+        }
+        return false;
+
+        }); //end click
 
         //function to submit team information to JSON object on server
-        $('#modalSubmit').click(function () {
-          if ($('#teamName').val() != "" && $('#firstName').val() != "" && $('#lastName').val() != "" && $('#phoneNumber').val() != "" && $('#sponsor').val() != "" && $('#zip').val() != "") {
+        function addTeam() {
             $.ajax({
               type: "POST",
               url: "backliftapp/team",
@@ -355,9 +338,6 @@
 
                 printTeam(league_array);
 
-                $('.control-group').removeClass('success error');
-                validate.resetForm();
-
                 if (league_array.length > 7) {
                   $('#teamAdd').css("visibility", "hidden");
                 }
@@ -365,15 +345,18 @@
                 clearForm();
               }
             }); //end ajax post
-          } else {
-            alert("It appears you have missed some information, please resubmit the team!");
-          }; //end if
-        }); //end test click
+        }; //end addTeam
+
+        $("body").on("click", ".clear", function(){
+          clearForm();
+          validator.resetForm();
+        });
+
         //function to create schedule
         $('#calcSchedule').click(function () {
-          $('<div id="sTableWrap" class="span12 wrapper"><h1>Schedule/Results</h1></div>').appendTo('#scheduleWrap');
           if (league_array.length < 4) {
             alert('Must have at least 4 teams to continue!');
+            return false;
           } else if (league_array.length == 4) {
             schedule = sched4;
           } else if (league_array.length == 5) {
@@ -406,6 +389,7 @@
             schedule = sched8;
           };
 
+          $('<div id="sTableWrap" class="span12 wrapper"><h1>Schedule/Results</h1></div>').appendTo('#scheduleWrap');
           $.ajax({
             type: 'GET',
             url: 'backliftapp/team',
@@ -587,6 +571,7 @@
           </table>
         </div>
         <!-- Modal -->
+        <form id="modal_form" class="form-horizontal">
         <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -594,7 +579,6 @@
 
           </div>
           <div class="modal-body">
-            <form id="modal_form" class="form-horizontal">
               <div class="control-group">
                 <label class="control-label" for="teamName">Team Name</label>
                 <div class="controls">
@@ -631,18 +615,13 @@
                   <input name="zip" type="text" id="zip" class="teamInput" placeholder="Zip Code" required/>
                 </div>
               </div>
-              <div class="controls">
-                <button id="modalSubmit" type="submit" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Submit</button>
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-              </div>
-            </form>
-          </div>
-          <!-- <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary">Save changes</button>
-   </div> --></div>
-        <!-- End Modal -->
-      </div>
+          </div> <!-- end modal body -->
+            <div class="modal-footer">
+              <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+              <button id="modalSubmit" type="submit" class="btn btn-primary">Submit</button>
+             </div> <!-- footer end -->
+          </div> <!-- modal end -->
+        </form>
       <!-- End Wrapper -->
       <div id="scheduleWrap"></div>
       <!-- End Schedule Wrap -->
