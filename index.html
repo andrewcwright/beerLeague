@@ -138,7 +138,6 @@
         };
         // //function to print schedule
         function printSchedule() {
-          if (league_array.length != 0) {
             $.ajax({
               type: 'GET',
               url: 'backliftapp/team',
@@ -156,6 +155,8 @@
                 scores_array = data;
               }
             }); //end ajax get
+
+          if (league_array.length > 3) {
             schedule = 0;
             $('<div id="sTableWrap" class="span12 wrapper"><h1>Schedule/Results</h1></div>').appendTo('#scheduleWrap');
             if (league_array.length == 4) {
