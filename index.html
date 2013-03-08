@@ -191,7 +191,7 @@
           }; //end if league array not 0
         };
         // function to update standings on click
-        $('#updateStandings').click(function () {
+        function updateStandings() {
           $.ajax({
             type: 'GET',
             url: 'backliftapp/team',
@@ -205,7 +205,7 @@
               }; //end for
             }
           }); //end ajax
-        }); //end updateStandings click
+        }; //end updateStandings click
 
         //Button to delete team
         $('table').on('click', '.deleteTeam', function () {
@@ -511,6 +511,7 @@
             }; //end bye if
           }; //end for loop
           week++
+          updateStandings();
         }); //end calcweek click
       }); //end document ready
     </script>
@@ -538,9 +539,6 @@
           <li class="">
             <a href="#sTableWrap" id="calcWeek" role="button">Calculate Week</a>
           </li>
-          <li class="">
-            <a href="#simpleTable" id="updateStandings" role="button">Update Standings</a>
-          </li> 
           <li class="">
             <a href="#simpleTable" id="newSeason" role="button">Start New Season</a>
           </li>            
